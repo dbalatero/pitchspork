@@ -1,7 +1,10 @@
 module Pitchspork
   class Review
-    def initialize(html)
+    attr_reader :source_url
+
+    def initialize(html, source_url)
       @doc = Nokogiri::HTML(html)
+      @source_url = source_url
     end
 
     def artist
@@ -32,6 +35,23 @@ module Pitchspork
 
     def author
       @author ||= @doc.css('p.credits a').first.content
+    end
+
+    def to_xml
+      @xml ||= begin
+        builder = Nokogiri::XML::Builder.new do |doc|
+          doc.article {
+            doc.source_url source_url
+            doc.artist artist
+            doc.album album
+            doc.rating rating
+            doc.label label
+            doc.author author
+            doc.body body
+          }
+        end
+        builder.to_xml
+      end
     end
   end
 end

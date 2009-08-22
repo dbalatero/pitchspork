@@ -3,12 +3,26 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe Pitchspork::Review do
   before(:all) do
     html = raw_fixture('squarepusher_solo_electric.html') 
-    @review = Pitchspork::Review.new(html)
+    @review = Pitchspork::Review.new(html, 'http://dongs.com')
   end
 
   describe "artist" do
     it "should extract the artist name successfully" do
       @review.artist.should == 'Squarepusher'
+    end
+  end
+
+  describe "source_url" do
+    it "should be correct" do
+      @review.source_url.should == 'http://dongs.com'
+    end
+  end
+
+  describe "to_xml" do
+    it "should dump attributes" do
+      # ah hell...
+      xml = @review.to_xml
+      xml.should =~ /<author>Patrick Sisson<\/author>/
     end
   end
 
